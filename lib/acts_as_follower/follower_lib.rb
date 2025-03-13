@@ -34,9 +34,21 @@ module ActsAsFollower
 
     def parent_classes
       return DEFAULT_PARENTS unless ActsAsFollower.custom_parent_classes
-
-      ActiveSupport::Deprecation.warn("Setting custom parent classes is deprecated and will be removed in future versions.")
+ 
+      ActiveSupport::Deprecation.new('7.2', 'acts_as_follower').warn(
+        "Setting custom parent classes is deprecated and will be removed in future versions."
+      )
       ActsAsFollower.custom_parent_classes + DEFAULT_PARENTS
+    end
+
+    # Returns a follow record if the current instance is following the passed record
+    def get_follow_for(followable)
+      self.follows.unblocked.for_followable(followable).first
+    end
+
+    # Returns the parent class
+    def parent_class
+      parent_class_name.constantize
     end
   end
 end
